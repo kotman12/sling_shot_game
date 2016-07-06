@@ -23,10 +23,15 @@ var Z0 = 0;
 
 
 var BigD = 3000;
-var yCenter = 400 * ((window.innerWidth-90)*8/15.5)/800;
+var widthRatio = 8/15.5;
+var widthRegulator = ((window.innerWidth-90)*widthRatio)/800;
+var heightRegulator = (window.innerWidth-90)/1400;
+
+
+var yCenter = 400 * widthRegulator;
         
-var xCenter = 700 * (window.innerWidth-90)/1400;
-var yOffset = 275 * ((window.innerWidth-90)*8/15.5)/800;
+var xCenter = 700 * heightRegulator;
+var yOffset = 275 * widthRegulator;
 
 var spriteInterval;
 var spriteArray = new Array();
@@ -63,7 +68,7 @@ powerLevel = 0;
 
                 canvas.width  = window.innerWidth-90;
 
-                canvas.height = (window.innerWidth-90)*8/15.5;
+                canvas.height = (window.innerWidth-90)*widthRatio;
 
                
             //}
@@ -93,7 +98,7 @@ function pumpSprites(){
                 var color = colors[colorIndex];
                 colors.splice(colorIndex, 1);
 
-                var sprite = new gameSprite(side, getRandomNumber(100 * ((window.innerWidth-90)*8/15.5)/800, 450 * ((window.innerWidth-90)*8/15.5)/800), getRandomNumber(3000, 8010), velocity, color);
+                var sprite = new gameSprite(side, getRandomNumber(100 * widthRegulator, 450 * widthRegulator), getRandomNumber(3000, 8010), velocity, color);
 
                 if(spriteArray.length === 0){
                             spriteArray.push(sprite);
@@ -120,7 +125,7 @@ function pumpSprites(){
                     
                     
                         for (var i = spriteArray.length-1; i > -1; i--){
-                            if (spriteArray[i].x > 1400 * (window.innerWidth-90)/1400 || spriteArray[i].x < 0){
+                            if (spriteArray[i].x > 1400 * heightRegulator || spriteArray[i].x < 0){
                                 if (colors.indexOf(spriteArray[i].color) < 0){
                                     colors.push(spriteArray[i].color);
                                 }
@@ -138,8 +143,8 @@ function pumpSprites(){
     
 }    
 
-var nameSpace = {};
-nameSpace.start = {
+var gameSpinacz = {};
+gameSpinacz.start = {
  
 startGame: function(){
 //function startGame() {
@@ -148,7 +153,7 @@ enterBool = false;
                        if (timerSec === 0 && timerMin === 0){
                            
                            clearInterval(clock);
-                           nameSpace.start.printScore();
+                           gameSpinacz.start.printScore();
               
                        }
                        
@@ -159,7 +164,7 @@ enterBool = false;
                           timerSec--;
                        }
                        
-                       nameSpace.start.printTime();
+                       gameSpinacz.start.printTime();
                         
                     }, 1000);
 
@@ -168,7 +173,7 @@ enterBool = false;
     listeners();
     
     var posX = xCenter/2;
-    var posY = 650 * ((window.innerWidth-90)*8/15.5)/800;
+    var posY = 650 * widthRegulator;
     var y = 0;
     var x = 0;
 
@@ -213,11 +218,11 @@ drawLine: function (ctx, x2, y2, x3, y3) {
     ctx.lineWidth="3";
     ctx.strokeStyle="red"; // Green path
     
-    ctx.moveTo(600 * (window.innerWidth-90)/1400, 650 * ((window.innerWidth-90)*8/15.5)/800);
+    ctx.moveTo(600 * heightRegulator, 650 * widthRegulator);
     ctx.lineTo(x2, y2);
     
     ctx.moveTo(x3, y3);
-    ctx.lineTo(800 * (window.innerWidth-90)/1400, 650 * ((window.innerWidth-90)*8/15.5)/800);
+    ctx.lineTo(800 * heightRegulator, 650 * widthRegulator);
     ctx.stroke();
     
     
@@ -225,16 +230,16 @@ drawLine: function (ctx, x2, y2, x3, y3) {
     ctx.lineWidth="6";
     ctx.strokeStyle="brown"; // Green path
     
-    ctx.moveTo(600 * (window.innerWidth-90)/1400, 650 * ((window.innerWidth-90)*8/15.5)/800);
-    ctx.lineTo(600 *  (window.innerWidth-90)/1400, 700 * ((window.innerWidth-90)*8/15.5)/800);
+    ctx.moveTo(600 * heightRegulator, 650 * widthRegulator);
+    ctx.lineTo(600 *  heightRegulator, 700 * widthRegulator);
         ctx.stroke();
     
      ctx.beginPath();
     ctx.lineWidth="6";
     ctx.strokeStyle="brown"; // Green path
 
-    ctx.moveTo(800 *  (window.innerWidth-90)/1400, 700 * ((window.innerWidth-90)*8/15.5)/800);
-    ctx.lineTo(800 *  (window.innerWidth-90)/1400, 650 * ((window.innerWidth-90)*8/15.5)/800);
+    ctx.moveTo(800 *  heightRegulator, 700 * widthRegulator);
+    ctx.lineTo(800 *  heightRegulator, 650 * widthRegulator);
     ctx.stroke();
     
 
@@ -262,13 +267,13 @@ drawBall2: function (context){
            if(powerUpFlag){
 
             context.fillStyle="#FF0000";
-            context.fillRect(200 *  (window.innerWidth-90)/1400, 700 * ((window.innerWidth-90)*8/15.5)/800, (200*powerLevel/3) * (window.innerWidth-90)/1400, 35 * ((window.innerWidth-90)*8/15.5)/800);
+            context.fillRect(200 *  heightRegulator, 700 * widthRegulator, (200*powerLevel/3) * heightRegulator, 35 * widthRegulator);
         }    
        
 },
-flacid: function () {
+luzna: function () {
     tight = false;
-     nameSpace.start.drawLine(myGameArea.getContext,  800 * (window.innerWidth-90)/1400, 650 * ((window.innerWidth-90)*8/15.5)/800, 600 * (window.innerWidth-90)/1400, 650 * ((window.innerWidth-90)*8/15.5)/800);
+     gameSpinacz.start.drawLine(myGameArea.getContext,  800 * heightRegulator, 650 * widthRegulator, 600 * heightRegulator, 650 * widthRegulator);
     
     if (end){
       for (var i =0; i < spriteArray.length; i++){
@@ -276,23 +281,23 @@ flacid: function () {
       }
                        if (timerSec === 0 && timerMin === 0){
                            clearInterval(clock);
-                           nameSpace.start.printScore();
+                           gameSpinacz.start.printScore();
               
                        }
       
                         myGameArea.getContext.font = "30px Arial";
-                        myGameArea.getContext.fillText("",1200 * (window.innerWidth-90)/1400, 100 * ((window.innerWidth-90)*8/15.5)/800);
+                        myGameArea.getContext.fillText("",1200 * heightRegulator, 100 * widthRegulator);
                         myGameArea.getContext.fillStyle = 'purple';
-                        myGameArea.getContext.fillText("Point Total: " + points, 1200 * (window.innerWidth-90)/1400, 100 * ((window.innerWidth-90)*8/15.5)/800);
+                        myGameArea.getContext.fillText("Point Total: " + points, 1200 * heightRegulator, 100 * widthRegulator);
                  
-                        nameSpace.start.printTime();
+                        gameSpinacz.start.printTime();
   }
     
 },
 procaPosition: function (x1, x2, y) {
     var ctx = myGameArea.getContext;
     var e = e || window.event;
-    nameSpace.start.drawLine(ctx, x1, y, x2, y);
+    gameSpinacz.start.drawLine(ctx, x1, y, x2, y);
     
     },
      
@@ -305,7 +310,7 @@ releaseBall: function (deltaX, deltaY, deltaZ) {
            clearInterval(spriteInterval);
            clearInterval(fly);
            clearInterval(clock);
-           nameSpace.start.printScore();
+           gameSpinacz.start.printScore();
 
        }
          
@@ -356,24 +361,24 @@ printTime: function (){
             myGameArea.getContext.lineWidth="3";
             myGameArea.getContext.strokeStyle="black"; // Green path
     
-            myGameArea.getContext.moveTo(198 * (window.innerWidth-90)/1400, 698 * ((window.innerWidth-90)*8/15.5)/800);
-            myGameArea.getContext.lineTo(405 * (window.innerWidth-90)/1400, 698 * ((window.innerWidth-90)*8/15.5)/800);
+            myGameArea.getContext.moveTo(198 * heightRegulator, 698 * widthRegulator);
+            myGameArea.getContext.lineTo(405 * heightRegulator, 698 * widthRegulator);
     
-            myGameArea.getContext.moveTo(405 * (window.innerWidth-90)/1400, 698 * ((window.innerWidth-90)*8/15.5)/800);
-            myGameArea.getContext.lineTo(405 * (window.innerWidth-90)/1400, 737 * ((window.innerWidth-90)*8/15.5)/800);
+            myGameArea.getContext.moveTo(405 * heightRegulator, 698 * widthRegulator);
+            myGameArea.getContext.lineTo(405 * heightRegulator, 737 * widthRegulator);
             
-           myGameArea.getContext.moveTo(405 * (window.innerWidth-90)/1400, 737 * ((window.innerWidth-90)*8/15.5)/800);
-            myGameArea.getContext.lineTo(198 * (window.innerWidth-90)/1400, 737 * ((window.innerWidth-90)*8/15.5)/800);
+           myGameArea.getContext.moveTo(405 * heightRegulator, 737 * widthRegulator);
+            myGameArea.getContext.lineTo(198 * heightRegulator, 737 * widthRegulator);
             
-           myGameArea.getContext.moveTo(198 * (window.innerWidth-90)/1400, 737 * ((window.innerWidth-90)*8/15.5)/800);
-            myGameArea.getContext.lineTo(198 * (window.innerWidth-90)/1400, 698 * ((window.innerWidth-90)*8/15.5)/800);
+           myGameArea.getContext.moveTo(198 * heightRegulator, 737 * widthRegulator);
+            myGameArea.getContext.lineTo(198 * heightRegulator, 698 * widthRegulator);
             
             myGameArea.getContext.stroke();
 
          myGameArea.getContext.font = "30px Arial";
-         myGameArea.getContext.fillText("", 1200* (window.innerWidth-90)/1400, 150 * ((window.innerWidth-90)*8/15.5)/800);
+         myGameArea.getContext.fillText("", 1200* heightRegulator, 150 * widthRegulator);
          myGameArea.getContext.fillStyle = 'purple';
-         myGameArea.getContext.fillText("Time " + timeString, 1200* (window.innerWidth-90)/1400, 150 * ((window.innerWidth-90)*8/15.5)/800);
+         myGameArea.getContext.fillText("Time " + timeString, 1200* heightRegulator, 150 * widthRegulator);
                    
         
 },
@@ -390,9 +395,9 @@ printScore: function (){
          clearInterval(fly);
          clearInterval(gameFunc);
          myGameArea.getContext.font = "60px Arial";
-         myGameArea.getContext.fillText("", 550* (window.innerWidth-90)/1400, 350 * ((window.innerWidth-90)*8/15.5)/800);
+         myGameArea.getContext.fillText("", 550* heightRegulator, 350 * widthRegulator);
          myGameArea.getContext.fillStyle = 'purple';
-         myGameArea.getContext.fillText("Final Score: " + points, 550 * (window.innerWidth-90)/1400, 350 * ((window.innerWidth-90)*8/15.5)/800);
+         myGameArea.getContext.fillText("Final Score: " + points, 550 * heightRegulator, 350 * widthRegulator);
                    
         
 }
@@ -422,7 +427,7 @@ start: function(x, y) {
 
      if (Math.pow(this.radius, 2) >= Math.pow((y-(yOffset + yCenter)),2) + Math.pow((x-xCenter), 2) + 8) {
          tight = true;
-       nameSpace.start.procaPosition(x-10, x+10, y);
+       gameSpinacz.start.procaPosition(x-10, x+10, y);
         X0 =  myGameArea.getX;
         Y0 =  myGameArea.getY;
         Z0 =  myGameArea.getZ;
@@ -432,11 +437,11 @@ start: function(x, y) {
       
       
                  myGameArea.getContext.font = "30px Arial";
-                 myGameArea.getContext.fillText("",1200 * (window.innerWidth-90)/1400, 100 * ((window.innerWidth-90)*8/15.5)/800);
+                 myGameArea.getContext.fillText("",1200 * heightRegulator, 100 * widthRegulator);
                  myGameArea.getContext.fillStyle = 'purple';
-                 myGameArea.getContext.fillText("Point Total: " + points, 1200 * (window.innerWidth-90)/1400 ,100 * ((window.innerWidth-90)*8/15.5)/800);
+                 myGameArea.getContext.fillText("Point Total: " + points, 1200 * heightRegulator ,100 * widthRegulator);
                  
-        nameSpace.start.printTime();
+        gameSpinacz.start.printTime();
                  
       for (var i =0; i < spriteArray.length; i++){
         spriteArray[i].move();
@@ -451,7 +456,7 @@ start: function(x, y) {
        
     }else {
 
-      nameSpace.start.flacid();
+      gameSpinacz.start.luzna();
       
     };
 
@@ -499,12 +504,12 @@ function KeyUpHandler(){
             myGameArea.y = ((Y0-yCenter) + deltaY*reposCount)*(BigD+Z0)/(BigD+myGameArea.getZ) + yCenter;
                     
             //if((200*m1 - m1*myGameArea.getX)/(m1*interval1) >= reposCount){
-            if ( myGameArea.getY > 650 * ((window.innerWidth-90)*8/15.5)/800){
-                nameSpace.start.procaPosition(myGameArea.getX, myGameArea.getX, myGameArea.getY);
+            if ( myGameArea.getY > 650 * widthRegulator){
+                gameSpinacz.start.procaPosition(myGameArea.getX, myGameArea.getX, myGameArea.getY);
                 reposCount = reposCount + 1;
             }else{
                clearInterval(interval);
-               nameSpace.start.releaseBall(deltaX, deltaY, deltaZ);
+               gameSpinacz.start.releaseBall(deltaX, deltaY, deltaZ);
                return;
             }
 
@@ -538,7 +543,7 @@ function gameSprite (x, y, z, velocity, color){
       var factor = (BigD)/(BigD + newZ);
       this.radius = 100 * factor;
       context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
-      nameSpace.start.drawBall1(context, this.color);
+      gameSpinacz.start.drawBall1(context, this.color);
      
  };   
     
@@ -575,16 +580,16 @@ function pelota (x, y, z){
           
           var x = ((X0-xCenter) + deltaX * (index+8))*(BigD+Z0)/(BigD + spriteArray[i].z) + xCenter ;
           
-          var y = ((deltaY * index)  + (.04* Math.pow(index, 2))/2 + ((650 * ((window.innerWidth-90)*8/15.5)/800) -yCenter))*(BigD+300)/(BigD + spriteArray[i].z)+ yCenter;
+          var y = ((deltaY * index)  + (.04* Math.pow(index, 2))/2 + ((650 * widthRegulator) -yCenter))*(BigD+300)/(BigD + spriteArray[i].z)+ yCenter;
           testx = x;
           testy = y;
           
                 //this.x = ((X0-xCenter) + xSpeed*reposCount)*(BigD+Z0)/(BigD +this.z) + xCenter ;
  
      // this.y = ((Y0-yCenter) + ySpeed*reposCount)*(BigD+Z0)/(BigD+this.z) + yCenter;
-      ///this.y = ((ySpeed * (reposCount-8)  + (0.04 * Math.pow((reposCount-8), 2))/2 + (650 * (((window.innerWidth-90)*8/15.5)/800)-yCenter))*(BigD+300)/(BigD + zSpeed*reposCount))+ yCenter;
+      ///this.y = ((ySpeed * (reposCount-8)  + (0.04 * Math.pow((reposCount-8), 2))/2 + (650 * (widthRegulator)-yCenter))*(BigD+300)/(BigD + zSpeed*reposCount))+ yCenter;
               
-            if(y < 650 * ((window.innerWidth-90)*8/15.5)/800){    
+            if(y < 650 * widthRegulator){    
                 ctx.beginPath();
                 ctx.lineWidth="1";
                 ctx.strokeStyle=spriteArray[i].color; // Green path
@@ -612,7 +617,7 @@ function pelota (x, y, z){
       context.beginPath();
       context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
 
-       nameSpace.start.drawBall2(context);
+       gameSpinacz.start.drawBall2(context);
        
 
 
@@ -622,7 +627,7 @@ function pelota (x, y, z){
 
 
       context.clearRect(0, 0, 5000, 5000);
-      nameSpace.start.flacid();
+      gameSpinacz.start.luzna();
       context.beginPath();
       context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
       
@@ -633,7 +638,7 @@ function pelota (x, y, z){
       this.x = ((X0-xCenter) + xSpeed*reposCount)*(BigD+Z0)/(BigD +this.z) + xCenter ;
 
      // this.y = ((Y0-yCenter) + ySpeed*reposCount)*(BigD+Z0)/(BigD+this.z) + yCenter;
-      this.y = ((ySpeed * (reposCount-8)  + (0.04 * Math.pow((reposCount-8), 2))/2 + (650 * (((window.innerWidth-90)*8/15.5)/800)-yCenter))*(BigD+300)/(BigD + zSpeed*reposCount))+ yCenter;
+      this.y = ((ySpeed * (reposCount-8)  + (0.04 * Math.pow((reposCount-8), 2))/2 + (650 * (widthRegulator)-yCenter))*(BigD+300)/(BigD + zSpeed*reposCount))+ yCenter;
       
         
       /*if (reposCount === test1){
@@ -645,7 +650,7 @@ function pelota (x, y, z){
                 context = myGameArea.getContext;   
                 context.beginPath();
                 context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
-               nameSpace.start.drawBall2(context);
+               gameSpinacz.start.drawBall2(context);
         }
        
        for (var i = 0; i < spriteArray.length; i++ ){
@@ -655,7 +660,7 @@ function pelota (x, y, z){
                 context = myGameArea.getContext;   
                 context.beginPath();
                 context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
-                nameSpace.start.drawBall2(context);
+                gameSpinacz.start.drawBall2(context);
             }
             
             if (checkForCollision(myGameArea.gameBall, spriteArray[i])){
@@ -680,11 +685,11 @@ function pelota (x, y, z){
     
 
       }        
-            nameSpace.start.printTime();
+            gameSpinacz.start.printTime();
             myGameArea.getContext.font = "30px Arial";
-            myGameArea.getContext.fillText("", 1200 * (window.innerWidth-90)/1400, 100 * ((window.innerWidth-90)*8/15.5)/800);
+            myGameArea.getContext.fillText("", 1200 * heightRegulator, 100 * widthRegulator);
             myGameArea.getContext.fillStyle = 'purple';
-            myGameArea.getContext.fillText("Point Total: " + points, 1200 * (window.innerWidth-90)/1400, 100 * ((window.innerWidth-90)*8/15.5)/800);
+            myGameArea.getContext.fillText("Point Total: " + points, 1200 * heightRegulator, 100 * widthRegulator);
 
  
   };
@@ -710,13 +715,13 @@ window.onload = function() {
         var canvas = document.getElementById("plotno");
         var context = canvas.getContext("2d");
         context.font = "30px Arial";
-        context.fillText("",700 * (window.innerWidth-90)/1400,350 * ((window.innerWidth-90)*8/15.5)/800);
+        context.fillText("",700 * heightRegulator,350 * widthRegulator);
         context.fillStyle = 'purple';
-        context.fillText("Use mouse to aim", 550 * (window.innerWidth-90)/1400, 240 * ((window.innerWidth-90)*8/15.5)/800);
-        context.fillText("(aiming crosses are color coded),", 550 * (window.innerWidth-90)/1400, 300 * ((window.innerWidth-90)*8/15.5)/800);
-        context.fillText("Use spacebar to shoot", 550 * (window.innerWidth-90)/1400, 360 * ((window.innerWidth-90)*8/15.5)/800);
-        context.fillText("(hold spacebar for more power),", 550 * (window.innerWidth-90)/1400, 420 * ((window.innerWidth-90)*8/15.5)/800);
-        context.fillText("Press Enter To Play!", 550 * (window.innerWidth-90)/1400, 480 * ((window.innerWidth-90)*8/15.5)/800);
+        context.fillText("Use mouse to aim", 550 * heightRegulator, 240 * widthRegulator);
+        context.fillText("(aiming crosses are color coded),", 550 * heightRegulator, 300 * widthRegulator);
+        context.fillText("Use spacebar to shoot", 550 * heightRegulator, 360 * widthRegulator);
+        context.fillText("(hold spacebar for more power),", 550 * heightRegulator, 420 * widthRegulator);
+        context.fillText("Press Enter To Play!", 550 * heightRegulator, 480 * widthRegulator);
         enterBool = true;
         
         ///resize_canvas();
@@ -726,7 +731,7 @@ $(document).keydown(function(evt) {
    if (evt.keyCode === 13 && end && enterBool) {
 
             
-        nameSpace.start.startGame();
+        gameSpinacz.start.startGame();
         
      }
    }); 
