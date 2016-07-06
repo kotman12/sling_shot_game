@@ -1,0 +1,805 @@
+                           <!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>   
+
+
+<title> Track Mouse </title>
+<script type="text/javascript">
+//code.jquery.com/jquery-1.12.0.min.js
+
+var reposCount;
+var end = true;    
+var frames = 0;
+
+var X0 = 0;
+var Y0 = 0;
+var Z0 = 0;
+
+
+var BigD = 3000;
+var yCenter = 400 * ((window.innerWidth-90)*8/15.5)/800;
+        
+var xCenter = 700 * (window.innerWidth-90)/1400;
+var yOffset = 275 * ((window.innerWidth-90)*8/15.5)/800;
+
+var spriteInterval;
+var spriteArray = new Array();
+var colors = ["red", "blue", "yellow", "orange", "purple", "brown", "maroon"];
+var spriteFunc;
+var gameFunc;
+var fly;
+var index = 0;
+
+var test1 = 0;
+var test2 = 0;
+var testx = 0;
+var testy = 0;
+
+var audioSnap;
+
+var points = 0;
+var game = {};
+
+var clock;
+
+var timerMin = 3;
+var timerSec = 0;
+var tick = 1;
+var enterBool;
+var tight;
+
+var powerUpFlag = false;
+
+powerLevel = 0;
+
+        function resize_canvas(){
+            canvas = document.getElementById("plotno");
+
+                canvas.width  = window.innerWidth-90;
+
+                canvas.height = (window.innerWidth-90)*8/15.5;
+
+               
+            //}
+        }
+        
+
+function pumpSprites(){
+        var freq = 2000;
+ spriteInterval = setInterval(function(){
+     
+                if (spriteArray.length < 4 && colors.length > 1){ 
+                    
+                var side = 0;
+                if (getRandomInt(0,1 === 1)){
+                    side = xCenter * 2;
+                }
+
+                var velocity = 0;
+                if (side === xCenter * 2){
+                   velocity = getRandomNumber(-1.1, -.7);
+                }else{
+                    velocity = getRandomNumber(0.7, 1.1);
+                }
+                
+                
+                var colorIndex = getRandomInt(0, colors.length-1);
+                var color = colors[colorIndex];
+                colors.splice(colorIndex, 1);
+
+                var sprite = new gameSprite(side, getRandomNumber(100 * ((window.innerWidth-90)*8/15.5)/800, 450 * ((window.innerWidth-90)*8/15.5)/800), getRandomNumber(3000, 8010), velocity, color);
+
+                if(spriteArray.length === 0){
+                            spriteArray.push(sprite);
+                }else{
+                    var l = spriteArray.length;
+                        for (var i = 0; i < l; i++){
+                            
+                           // if (i === spriteArray.length-1 && spriteArray[i].z  sprite.z){
+                             //   spriteArray.push(sprite);
+       
+                            
+                            if(spriteArray[i].z < sprite.z){
+                                spriteArray.splice(i, 0, sprite);
+                                break;
+                            }else if(i === spriteArray.length-1){
+                                //spriteArray.splice(spriteArray.length-1, 0, sprite);
+                                spriteArray.push(sprite);
+                                break;
+                            }
+
+                        }
+                        }
+                    }
+                    
+                    
+                        for (var i = spriteArray.length-1; i > -1; i--){
+                            if (spriteArray[i].x > 1400 * (window.innerWidth-90)/1400 || spriteArray[i].x < 0){
+                                if (colors.indexOf(spriteArray[i].color) < 0){
+                                    colors.push(spriteArray[i].color);
+                                }
+                                delete spriteArray[i].move;
+                                spriteArray.splice(i, 1);
+                            }
+                            
+                            }
+      
+                    freq = getRandomNumber(2000, 4000);
+                
+            }, freq           
+           );
+   
+    
+}    
+
+var nameSpace = {};
+nameSpace.start = {
+ 
+startGame: function(){
+//function startGame() {
+enterBool = false;
+                    clock = setInterval(function(){
+                       if (timerSec === 0 && timerMin === 0){
+                           
+                           clearInterval(clock);
+                           nameSpace.start.printScore();
+              
+                       }
+                       
+                       if(timerSec === 0){
+                           timerMin --;
+                           timerSec = 59;
+                       }else{
+                          timerSec--;
+                       }
+                       
+                       nameSpace.start.printTime();
+                        
+                    }, 1000);
+
+   pumpSprites();
+
+    listeners();
+    
+    var posX = xCenter/2;
+    var posY = 650 * ((window.innerWidth-90)*8/15.5)/800;
+    var y = 0;
+    var x = 0;
+
+    document.body.onmousemove = function(){
+      
+       if (end){
+           
+          var e = e || window.event;
+          posX = e.clientX;
+          posY = e.clientY;
+        }
+     
+    };
+
+    gameFunc = setInterval( function (){
+
+         if (end){
+
+
+                y = posY  + ((y-yCenter)- yOffset * BigD/(BigD+Z0))*powerLevel/10;
+                x = posX + ((x-xCenter)*(powerLevel)/10);  
+                        
+               myGameArea.start(x,y);
+               
+                  if(powerUpFlag && powerLevel <= 3){
+                        powerLevel = powerLevel + 0.25/10;
+
+                    }
+                    
+ 
+           }
+        
+    }, 10
+    );  
+   
+},
+
+drawLine: function (ctx, x2, y2, x3, y3) {
+    
+    ctx.clearRect(0, 0, 5000, 5000);
+    ctx.beginPath();
+    ctx.lineWidth="3";
+    ctx.strokeStyle="red"; // Green path
+    
+    ctx.moveTo(600 * (window.innerWidth-90)/1400, 650 * ((window.innerWidth-90)*8/15.5)/800);
+    ctx.lineTo(x2, y2);
+    
+    ctx.moveTo(x3, y3);
+    ctx.lineTo(800 * (window.innerWidth-90)/1400, 650 * ((window.innerWidth-90)*8/15.5)/800);
+    ctx.stroke();
+    
+    
+     ctx.beginPath();
+    ctx.lineWidth="6";
+    ctx.strokeStyle="brown"; // Green path
+    
+    ctx.moveTo(600 * (window.innerWidth-90)/1400, 650 * ((window.innerWidth-90)*8/15.5)/800);
+    ctx.lineTo(600 *  (window.innerWidth-90)/1400, 700 * ((window.innerWidth-90)*8/15.5)/800);
+        ctx.stroke();
+    
+     ctx.beginPath();
+    ctx.lineWidth="6";
+    ctx.strokeStyle="brown"; // Green path
+
+    ctx.moveTo(800 *  (window.innerWidth-90)/1400, 700 * ((window.innerWidth-90)*8/15.5)/800);
+    ctx.lineTo(800 *  (window.innerWidth-90)/1400, 650 * ((window.innerWidth-90)*8/15.5)/800);
+    ctx.stroke();
+    
+
+},
+
+drawBall1: function(context, color){
+
+      context.fillStyle = color;
+      context.fill();
+      context.lineWidth = 5;
+      context.strokeStyle = '#003300';
+      context.stroke();
+      
+
+},
+
+drawBall2: function (context){
+
+      context.fillStyle = "green";
+      context.fill();
+      context.lineWidth = 5;
+      context.strokeStyle = '#003300';
+      context.stroke();
+      
+           if(powerUpFlag){
+
+            context.fillStyle="#FF0000";
+            context.fillRect(200 *  (window.innerWidth-90)/1400, 700 * ((window.innerWidth-90)*8/15.5)/800, (200*powerLevel/3) * (window.innerWidth-90)/1400, 35 * ((window.innerWidth-90)*8/15.5)/800);
+        }    
+       
+},
+flacid: function () {
+    tight = false;
+     nameSpace.start.drawLine(myGameArea.getContext,  800 * (window.innerWidth-90)/1400, 650 * ((window.innerWidth-90)*8/15.5)/800, 600 * (window.innerWidth-90)/1400, 650 * ((window.innerWidth-90)*8/15.5)/800);
+    
+    if (end){
+      for (var i =0; i < spriteArray.length; i++){
+        spriteArray[i].move();
+      }
+                       if (timerSec === 0 && timerMin === 0){
+                           clearInterval(clock);
+                           nameSpace.start.printScore();
+              
+                       }
+      
+                        myGameArea.getContext.font = "30px Arial";
+                        myGameArea.getContext.fillText("",1200 * (window.innerWidth-90)/1400, 100 * ((window.innerWidth-90)*8/15.5)/800);
+                        myGameArea.getContext.fillStyle = 'purple';
+                        myGameArea.getContext.fillText("Point Total: " + points, 1200 * (window.innerWidth-90)/1400, 100 * ((window.innerWidth-90)*8/15.5)/800);
+                 
+                        nameSpace.start.printTime();
+  }
+    
+},
+procaPosition: function (x1, x2, y) {
+    var ctx = myGameArea.getContext;
+    var e = e || window.event;
+    nameSpace.start.drawLine(ctx, x1, y, x2, y);
+    
+    },
+     
+releaseBall: function (deltaX, deltaY, deltaZ) {
+    
+    fly = setInterval( function() {
+         
+      if (timerSec <= 0 && timerMin <= 0){
+           clearInterval(gameFunc);
+           clearInterval(spriteInterval);
+           clearInterval(fly);
+           clearInterval(clock);
+           nameSpace.start.printScore();
+
+       }
+         
+     myGameArea.gameBall.flyAway(deltaX, deltaY, deltaZ);
+     
+       if (yCenter + (myGameArea.gameBall.y-yCenter)*(BigD + myGameArea.gameBall.z)/BigD  > 2*yCenter){
+            
+              $(document).find('*').on('keyup keydown');
+              delete myGameArea.gameBall.flyAway;
+              delete myGameArea.gameBall.followProca;
+              delete myGameArea.gameBall.drawMark;
+   
+              //
+              delete myGameArea.start();
+              delete myGameArea.space();
+              reposCount = 0;
+              
+
+              
+            clearInterval(fly);
+            setTimeout(function(){
+                end = true;
+                
+            }, 10);
+            
+      }else{
+          reposCount = reposCount + 1;
+      }
+    }, frames);
+    return;
+  
+},
+
+printTime: function (){
+
+
+        var timeString = "";
+
+        if (timerMin > -1){
+        if (timerSec < 10){
+            timeString = timerMin + ":" + "0"+timerSec;
+        }else{
+            timeString = timerMin+":"+timerSec;
+        }
+    }
+    
+            myGameArea.getContext.beginPath();
+            myGameArea.getContext.lineWidth="3";
+            myGameArea.getContext.strokeStyle="black"; // Green path
+    
+            myGameArea.getContext.moveTo(198 * (window.innerWidth-90)/1400, 698 * ((window.innerWidth-90)*8/15.5)/800);
+            myGameArea.getContext.lineTo(405 * (window.innerWidth-90)/1400, 698 * ((window.innerWidth-90)*8/15.5)/800);
+    
+            myGameArea.getContext.moveTo(405 * (window.innerWidth-90)/1400, 698 * ((window.innerWidth-90)*8/15.5)/800);
+            myGameArea.getContext.lineTo(405 * (window.innerWidth-90)/1400, 737 * ((window.innerWidth-90)*8/15.5)/800);
+            
+           myGameArea.getContext.moveTo(405 * (window.innerWidth-90)/1400, 737 * ((window.innerWidth-90)*8/15.5)/800);
+            myGameArea.getContext.lineTo(198 * (window.innerWidth-90)/1400, 737 * ((window.innerWidth-90)*8/15.5)/800);
+            
+           myGameArea.getContext.moveTo(198 * (window.innerWidth-90)/1400, 737 * ((window.innerWidth-90)*8/15.5)/800);
+            myGameArea.getContext.lineTo(198 * (window.innerWidth-90)/1400, 698 * ((window.innerWidth-90)*8/15.5)/800);
+            
+            myGameArea.getContext.stroke();
+
+         myGameArea.getContext.font = "30px Arial";
+         myGameArea.getContext.fillText("", 1200* (window.innerWidth-90)/1400, 150 * ((window.innerWidth-90)*8/15.5)/800);
+         myGameArea.getContext.fillStyle = 'purple';
+         myGameArea.getContext.fillText("Time " + timeString, 1200* (window.innerWidth-90)/1400, 150 * ((window.innerWidth-90)*8/15.5)/800);
+                   
+        
+},
+
+printScore: function (){
+
+
+         myGameArea.getContext.clearRect(0, 0, 20000, 20000);
+              delete myGameArea.gameBall.flyAway;
+              delete myGameArea.gameBall.followProca;
+              delete myGameArea.gameBall.drawMark;
+
+         clearInterval(clock);
+         clearInterval(fly);
+         clearInterval(gameFunc);
+         myGameArea.getContext.font = "60px Arial";
+         myGameArea.getContext.fillText("", 550* (window.innerWidth-90)/1400, 350 * ((window.innerWidth-90)*8/15.5)/800);
+         myGameArea.getContext.fillStyle = 'purple';
+         myGameArea.getContext.fillText("Final Score: " + points, 550 * (window.innerWidth-90)/1400, 350 * ((window.innerWidth-90)*8/15.5)/800);
+                   
+        
+}
+
+};
+
+
+
+
+myGameArea = {
+     
+
+start: function(x, y) {
+
+
+              
+    this.x = x;
+    this.y = y;
+    this.radius = 300 + 300*(powerLevel)/10;
+    this.z = 300 - Math.sqrt(Math.pow(this.radius,2) - Math.pow((y - (yOffset + yCenter)), 2) - Math.pow((x-xCenter), 2));
+    ///this.z = 400 - Math.sqrt(Math.pow(radius,2) - Math.pow((y - (yOffset + yCenter)), 2) - Math.pow((x-xCenter), 2));
+
+    var canvas = document.getElementById("plotno");
+    this.context = canvas.getContext("2d");
+    this.gameBall;
+    
+
+     if (Math.pow(this.radius, 2) >= Math.pow((y-(yOffset + yCenter)),2) + Math.pow((x-xCenter), 2) + 8) {
+         tight = true;
+       nameSpace.start.procaPosition(x-10, x+10, y);
+        X0 =  myGameArea.getX;
+        Y0 =  myGameArea.getY;
+        Z0 =  myGameArea.getZ;
+      
+      this.gameBall = new pelota(x, y, this.z);
+ 
+      
+      
+                 myGameArea.getContext.font = "30px Arial";
+                 myGameArea.getContext.fillText("",1200 * (window.innerWidth-90)/1400, 100 * ((window.innerWidth-90)*8/15.5)/800);
+                 myGameArea.getContext.fillStyle = 'purple';
+                 myGameArea.getContext.fillText("Point Total: " + points, 1200 * (window.innerWidth-90)/1400 ,100 * ((window.innerWidth-90)*8/15.5)/800);
+                 
+        nameSpace.start.printTime();
+                 
+      for (var i =0; i < spriteArray.length; i++){
+        spriteArray[i].move();
+      }
+      
+           this.gameBall.followProca();
+
+            this.gameBall.drawMark();
+
+                
+
+       
+    }else {
+
+      nameSpace.start.flacid();
+      
+    };
+
+        
+    },
+
+    
+space: function()  {
+
+
+},
+    
+    get getContext() { 
+        return this.context;
+    },
+       get getX() { 
+        return this.x;
+    },
+        get getY() { 
+        return this.y;
+    },
+        get getZ() { 
+        return this.z;
+    },
+        get getRad() { 
+        return this.radius;
+    }
+    
+};
+
+function KeyUpHandler(){
+
+    spriteIndexPoint = 0;
+    reposCount = 0;
+
+    var deltaY = -((myGameArea.getY-yCenter)- yOffset*BigD/(BigD+myGameArea.getZ))/8;
+    var deltaX = -(myGameArea.getX-xCenter)/8;
+    var deltaZ = - (Z0 - 300)/8;
+    var interval;
+
+       interval = setInterval(function () {
+
+            myGameArea.z = Z0 + deltaZ * reposCount;
+            myGameArea.x = ((X0-xCenter) + deltaX*reposCount)*(BigD+Z0)/(BigD+myGameArea.getZ) + xCenter;
+            myGameArea.y = ((Y0-yCenter) + deltaY*reposCount)*(BigD+Z0)/(BigD+myGameArea.getZ) + yCenter;
+                    
+            //if((200*m1 - m1*myGameArea.getX)/(m1*interval1) >= reposCount){
+            if ( myGameArea.getY > 650 * ((window.innerWidth-90)*8/15.5)/800){
+                nameSpace.start.procaPosition(myGameArea.getX, myGameArea.getX, myGameArea.getY);
+                reposCount = reposCount + 1;
+            }else{
+               clearInterval(interval);
+               nameSpace.start.releaseBall(deltaX, deltaY, deltaZ);
+               return;
+            }
+
+            myGameArea.gameBall = new pelota(myGameArea.getX, myGameArea.getY, myGameArea.getZ);
+            myGameArea.gameBall.followProca();
+            
+            
+
+           
+           }, frames);
+    
+};
+
+function gameSprite (x, y, z, velocity, color){
+    
+    var context = myGameArea.getContext;
+    this.color = color;
+    this.z = z;
+    //var factor = (BigD)/(BigD + this.z);
+    this.y = y;
+    this.x = x;
+    
+    this.velocity = velocity;
+    
+ this.move = function(){
+      //context.clearRect(0, 0, 1000, 1100);
+      context.beginPath();
+      this.x = this.x + velocity;
+      //this.z = (Math.sin(this.x)+4)/4 * 
+      var newZ = (Math.sin(this.x/100)+4)/4 * this.z
+      var factor = (BigD)/(BigD + newZ);
+      this.radius = 100 * factor;
+      context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
+      nameSpace.start.drawBall1(context, this.color);
+     
+ };   
+    
+    
+    
+}
+
+function pelota (x, y, z){
+      var context = myGameArea.getContext;
+      var factor = (BigD)/(BigD + z);
+      this.radius = 17 * factor;
+      this.x = x;
+      this.y = y;
+      this.z = z;
+      this.ySpeed;
+      
+   this.drawMark = function() {
+       
+        var deltaY = -((myGameArea.getY-yCenter)- yOffset*BigD/(BigD+Z0))/8;
+
+        var deltaX = -(myGameArea.getX-xCenter)/8;
+        
+        var deltaZ = - (Z0 - 300)/8;
+        var ctx = myGameArea.getContext;
+        
+        
+    
+    for (var i = 0; i < spriteArray.length; i++){
+        
+          var index = (spriteArray[i].z-300)/deltaZ;
+          
+          test1 = Math.round(index);
+          test2 = index;
+          
+          var x = ((X0-xCenter) + deltaX * (index+8))*(BigD+Z0)/(BigD + spriteArray[i].z) + xCenter ;
+          
+          var y = ((deltaY * index)  + (.04* Math.pow(index, 2))/2 + ((650 * ((window.innerWidth-90)*8/15.5)/800) -yCenter))*(BigD+300)/(BigD + spriteArray[i].z)+ yCenter;
+          testx = x;
+          testy = y;
+          
+                //this.x = ((X0-xCenter) + xSpeed*reposCount)*(BigD+Z0)/(BigD +this.z) + xCenter ;
+ 
+     // this.y = ((Y0-yCenter) + ySpeed*reposCount)*(BigD+Z0)/(BigD+this.z) + yCenter;
+      ///this.y = ((ySpeed * (reposCount-8)  + (0.04 * Math.pow((reposCount-8), 2))/2 + (650 * (((window.innerWidth-90)*8/15.5)/800)-yCenter))*(BigD+300)/(BigD + zSpeed*reposCount))+ yCenter;
+              
+            if(y < 650 * ((window.innerWidth-90)*8/15.5)/800){    
+                ctx.beginPath();
+                ctx.lineWidth="1";
+                ctx.strokeStyle=spriteArray[i].color; // Green path
+
+                ctx.moveTo(x-10, y);
+                ctx.lineTo(x+10, y);
+
+                ctx.stroke();
+
+                ctx.moveTo(x, y-10);
+                ctx.lineTo(x, y+10);
+
+                ctx.stroke();
+                
+               }
+                
+  
+    }
+
+
+  };     
+      
+  this.followProca = function(){
+
+      context.beginPath();
+      context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
+
+       nameSpace.start.drawBall2(context);
+       
+
+
+  };
+  
+  this.flyAway = function(xSpeed, ySpeed, zSpeed){
+
+
+      context.clearRect(0, 0, 5000, 5000);
+      nameSpace.start.flacid();
+      context.beginPath();
+      context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
+      
+      
+     
+      this.z = this.z + zSpeed;
+      this.radius = 17 * (BigD/(BigD+this.z));
+      this.x = ((X0-xCenter) + xSpeed*reposCount)*(BigD+Z0)/(BigD +this.z) + xCenter ;
+
+     // this.y = ((Y0-yCenter) + ySpeed*reposCount)*(BigD+Z0)/(BigD+this.z) + yCenter;
+      this.y = ((ySpeed * (reposCount-8)  + (0.04 * Math.pow((reposCount-8), 2))/2 + (650 * (((window.innerWidth-90)*8/15.5)/800)-yCenter))*(BigD+300)/(BigD + zSpeed*reposCount))+ yCenter;
+      
+        
+      /*if (reposCount === test1){
+          alert("stop");
+      }*/
+
+
+       if (spriteArray.length === 0 || myGameArea.gameBall.z > spriteArray[spriteArray.length - 1].z){
+                context = myGameArea.getContext;   
+                context.beginPath();
+                context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
+               nameSpace.start.drawBall2(context);
+        }
+       
+       for (var i = 0; i < spriteArray.length; i++ ){
+           
+             spriteArray[i].move();
+            if(myGameArea.gameBall.z < spriteArray[i].z /*&& i >= index*/){
+                context = myGameArea.getContext;   
+                context.beginPath();
+                context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
+                nameSpace.start.drawBall2(context);
+            }
+            
+            if (checkForCollision(myGameArea.gameBall, spriteArray[i])){
+              //alert("collision!");
+              
+              var color = spriteArray[i].color;
+			  spriteArray.splice(i, 1);
+              clearInterval(fly);
+              
+              if (colors.indexOf(color) < 0){
+                  colors.push(color);
+              }
+              
+              var explosion = new Audio('http://soundbible.com/mp3/Bomb_Exploding-Sound_Explorer-68256487.mp3');
+              explosion.play();
+              
+              points ++;
+              end = true;
+              
+              
+            }
+    
+
+      }        
+            nameSpace.start.printTime();
+            myGameArea.getContext.font = "30px Arial";
+            myGameArea.getContext.fillText("", 1200 * (window.innerWidth-90)/1400, 100 * ((window.innerWidth-90)*8/15.5)/800);
+            myGameArea.getContext.fillStyle = 'purple';
+            myGameArea.getContext.fillText("Point Total: " + points, 1200 * (window.innerWidth-90)/1400, 100 * ((window.innerWidth-90)*8/15.5)/800);
+
+ 
+  };
+    
+}
+
+
+function checkForCollision(gameBall, targetBall){
+    var radiiDelta = Math.pow((gameBall.x-targetBall.x), 2)+Math.pow((gameBall.y-targetBall.y),2) + Math.pow((gameBall.z-targetBall.z),2);
+    if(radiiDelta <= Math.pow(gameBall.radius+targetBall.radius,2) )
+        {
+            return true;
+        }
+        return false;
+    
+}
+
+
+
+window.onload = function() {
+    
+    resize_canvas();
+        var canvas = document.getElementById("plotno");
+        var context = canvas.getContext("2d");
+        context.font = "30px Arial";
+        context.fillText("",700 * (window.innerWidth-90)/1400,350 * ((window.innerWidth-90)*8/15.5)/800);
+        context.fillStyle = 'purple';
+        context.fillText("Use mouse to aim", 550 * (window.innerWidth-90)/1400, 240 * ((window.innerWidth-90)*8/15.5)/800);
+        context.fillText("(aiming crosses are color coded),", 550 * (window.innerWidth-90)/1400, 300 * ((window.innerWidth-90)*8/15.5)/800);
+        context.fillText("Use spacebar to shoot", 550 * (window.innerWidth-90)/1400, 360 * ((window.innerWidth-90)*8/15.5)/800);
+        context.fillText("(hold spacebar for more power),", 550 * (window.innerWidth-90)/1400, 420 * ((window.innerWidth-90)*8/15.5)/800);
+        context.fillText("Press Enter To Play!", 550 * (window.innerWidth-90)/1400, 480 * ((window.innerWidth-90)*8/15.5)/800);
+        enterBool = true;
+        
+        ///resize_canvas();
+        
+$(document).keydown(function(evt) {
+        
+   if (evt.keyCode === 13 && end && enterBool) {
+
+            
+        nameSpace.start.startGame();
+        
+     }
+   }); 
+};
+
+function getRandomNumber(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function listeners () {
+    
+    
+       $(document).keydown(function(evt) {
+           
+       audioStretch = new Audio('http://soundbible.com/mp3/Stretching Growing-SoundBible.com-1422617810.mp3');
+       
+       if (evt.keyCode === 32 && end && tight) 
+       {
+          
+           //$(document).unbind( "keydown mousemove" );
+           powerUpFlag = true;
+     
+           reposCount = 0;
+           frames = 10;
+       
+           if (powerLevel === 3){
+                    powerUpFlag = false;
+                    
+           }
+           //clearInterval(spriteInterval);
+
+           ///myGameArea.space();
+           return;
+
+        }
+   }); 
+                   
+  $(document).keyup(function(evt) { 
+   
+  if (evt.keyCode === 32  && end && tight) {
+            
+           
+            audioSnap = new Audio('https://d1490khl9dq1ow.cloudfront.net/sfx/mp3preview/rubber-band-snap_MJvBT94O.mp3');
+      
+            audioSnap.play();
+            powerUpFlag = false;
+            end = false;
+
+            KeyUpHandler();
+            powerLevel = 0;
+            
+            audioBool = true;
+      }
+      
+          });
+
+    
+}
+//}
+</script>
+
+</head>
+  <div id = "msg"></div> 
+  <div id = "alert">
+<canvas id= "plotno" style="border:1px solid #d3d3d3; background: url('https://0.s3.envato.com/files/149997647/bacgrounds.jpg'); background-size: 100%">
+
+</canvas>
+       <!-- <img id="explosion" src="http://i.istockimg.com/file_thumbview_approve/22823865/3/stock-illustration-22823865-red-explosion-cartoon.jpg" height = "100" width = "100" style = "display:none">-->
+</div>
+</body>
+</html>
+
