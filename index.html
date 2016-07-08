@@ -88,9 +88,9 @@ function pumpSprites(){
 
                 var velocity = 0;
                 if (side === xCenter * 2){
-                   velocity = getRandomNumber(-1.1, -.7);
+                   velocity = getRandomNumber(-1.1*heightRegulator, -.7*heightRegulator);
                 }else{
-                    velocity = getRandomNumber(0.7, 1.1);
+                    velocity = getRandomNumber(0.7*heightRegulator, 1.1*heightRegulator);
                 }
                 
                 
