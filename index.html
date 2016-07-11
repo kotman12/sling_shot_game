@@ -88,9 +88,9 @@ function pumpSprites(){
 
                 var velocity = 0;
                 if (side === xCenter * 2){
-                   velocity = getRandomNumber(-1.1*heightRegulator, -.7*heightRegulator);
+                   velocity = getRandomNumber(-1.1, -.7);
                 }else{
-                    velocity = getRandomNumber(0.7*heightRegulator, 1.1*heightRegulator);
+                    velocity = getRandomNumber(0.7, 1.1);
                 }
                 
                 
@@ -151,8 +151,8 @@ startGame: function(){
 enterBool = false;
                     clock = setInterval(function(){
                        if (timerSec === 0 && timerMin === 0){
-                           
                            clearInterval(clock);
+                           myGameArea.getContext.clearRect(0, 0, 20000, 20000);
                            gameSpinacz.start.printScore();
               
                        }
@@ -258,18 +258,27 @@ drawBall1: function(context, color){
 
 drawBall2: function (context){
 
-      context.fillStyle = "green";
-      context.fill();
-      context.lineWidth = 5;
-      context.strokeStyle = '#003300';
-      context.stroke();
-      
-           if(powerUpFlag){
+    if (timerSec <= 0 && timerMin <= 0){
+           clearInterval(gameFunc);
+           clearInterval(spriteInterval);
+           clearInterval(fly);
+           clearInterval(clock);
+           myGameArea.getContext.clearRect(0, 0, 20000, 20000);
+           gameSpinacz.start.printScore();
 
-            context.fillStyle="#FF0000";
-            context.fillRect(200 *  heightRegulator, 700 * widthRegulator, (200*powerLevel/3) * heightRegulator, 35 * widthRegulator);
-        }    
-       
+       }else{
+            context.fillStyle = "green";
+            context.fill();
+            context.lineWidth = 5;
+            context.strokeStyle = '#003300';
+            context.stroke();
+
+                 if(powerUpFlag){
+
+                  context.fillStyle="#FF0000";
+                  context.fillRect(200 *  heightRegulator, 700 * widthRegulator, (200*powerLevel/3) * heightRegulator, 35 * widthRegulator);
+              }    
+    }
 },
 luzna: function () {
     tight = false;
@@ -281,9 +290,11 @@ luzna: function () {
       }
                        if (timerSec === 0 && timerMin === 0){
                            clearInterval(clock);
+                           
+                           myGameArea.getContext.clearRect(0, 0, 20000, 20000);
                            gameSpinacz.start.printScore();
               
-                       }
+                       }else{
       
                         myGameArea.getContext.font = "30px Arial";
                         myGameArea.getContext.fillText("",1200 * heightRegulator, 100 * widthRegulator);
@@ -291,6 +302,7 @@ luzna: function () {
                         myGameArea.getContext.fillText("Point Total: " + points, 1200 * heightRegulator, 100 * widthRegulator);
                  
                         gameSpinacz.start.printTime();
+                    }
   }
     
 },
@@ -310,35 +322,37 @@ releaseBall: function (deltaX, deltaY, deltaZ) {
            clearInterval(spriteInterval);
            clearInterval(fly);
            clearInterval(clock);
+           myGameArea.getContext.clearRect(0, 0, 20000, 20000);
            gameSpinacz.start.printScore();
 
-       }
+       }else{
          
-     myGameArea.gameBall.flyAway(deltaX, deltaY, deltaZ);
-     
-       if (yCenter + (myGameArea.gameBall.y-yCenter)*(BigD + myGameArea.gameBall.z)/BigD  > 2*yCenter){
-            
-              $(document).find('*').on('keyup keydown');
-              delete myGameArea.gameBall.flyAway;
-              delete myGameArea.gameBall.followProca;
-              delete myGameArea.gameBall.drawMark;
-   
-              //
-              delete myGameArea.start();
-              delete myGameArea.space();
-              reposCount = 0;
-              
+            myGameArea.gameBall.flyAway(deltaX, deltaY, deltaZ);
 
-              
-            clearInterval(fly);
-            setTimeout(function(){
-                end = true;
-                
-            }, 10);
-            
-      }else{
-          reposCount = reposCount + 1;
-      }
+              if (yCenter + (myGameArea.gameBall.y-yCenter)*(BigD + myGameArea.gameBall.z)/BigD  > 2*yCenter){
+
+                     $(document).find('*').on('keyup keydown');
+                     delete myGameArea.gameBall.flyAway;
+                     delete myGameArea.gameBall.followProca;
+                     delete myGameArea.gameBall.drawMark;
+
+                     //
+                     delete myGameArea.start();
+                     delete myGameArea.space();
+                     reposCount = 0;
+
+
+
+                   clearInterval(fly);
+                   setTimeout(function(){
+                       end = true;
+
+                   }, 10);
+
+             }else{
+                 reposCount = reposCount + 1;
+             }
+       }
     }, frames);
     return;
   
@@ -375,7 +389,7 @@ printTime: function (){
             
             myGameArea.getContext.stroke();
 
-         myGameArea.getContext.font = "30px Arial";
+         myGameArea.getContext.font = "20px Arial";
          myGameArea.getContext.fillText("", 1200* heightRegulator, 150 * widthRegulator);
          myGameArea.getContext.fillStyle = 'purple';
          myGameArea.getContext.fillText("Time " + timeString, 1200* heightRegulator, 150 * widthRegulator);
@@ -435,8 +449,8 @@ start: function(x, y) {
       this.gameBall = new pelota(x, y, this.z);
  
       
-      
-                 myGameArea.getContext.font = "30px Arial";
+                 
+                 myGameArea.getContext.font = "20px Arial";
                  myGameArea.getContext.fillText("",1200 * heightRegulator, 100 * widthRegulator);
                  myGameArea.getContext.fillStyle = 'purple';
                  myGameArea.getContext.fillText("Point Total: " + points, 1200 * heightRegulator ,100 * widthRegulator);
@@ -539,7 +553,7 @@ function gameSprite (x, y, z, velocity, color){
       context.beginPath();
       this.x = this.x + velocity;
       //this.z = (Math.sin(this.x)+4)/4 * 
-      var newZ = (Math.sin(this.x/100)+4)/4 * this.z
+      var newZ = (Math.sin(this.x/100)+4)/4 * this.z;
       var factor = (BigD)/(BigD + newZ);
       this.radius = 100 * factor;
       context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
@@ -686,7 +700,7 @@ function pelota (x, y, z){
 
       }        
             gameSpinacz.start.printTime();
-            myGameArea.getContext.font = "30px Arial";
+            myGameArea.getContext.font = "20px Arial";
             myGameArea.getContext.fillText("", 1200 * heightRegulator, 100 * widthRegulator);
             myGameArea.getContext.fillStyle = 'purple';
             myGameArea.getContext.fillText("Point Total: " + points, 1200 * heightRegulator, 100 * widthRegulator);
@@ -714,7 +728,7 @@ window.onload = function() {
     resize_canvas();
         var canvas = document.getElementById("plotno");
         var context = canvas.getContext("2d");
-        context.font = "30px Arial";
+        context.font = "20px Arial";
         context.fillText("",700 * heightRegulator,350 * widthRegulator);
         context.fillStyle = 'purple';
         context.fillText("Use mouse to aim", 550 * heightRegulator, 240 * widthRegulator);
@@ -754,6 +768,12 @@ function listeners () {
        
        if (evt.keyCode === 32 && end && tight) 
        {
+            if (timerSec === 0 && timerMin === 0){
+                clearInterval(clock);
+                myGameArea.getContext.clearRect(0, 0, 20000, 20000);
+                gameSpinacz.start.printScore();
+
+            }
           
            //$(document).unbind( "keydown mousemove" );
            powerUpFlag = true;
@@ -807,4 +827,3 @@ function listeners () {
 </div>
 </body>
 </html>
-
