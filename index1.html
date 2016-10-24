@@ -41,6 +41,11 @@ var gameFunc;
 var fly;
 var index = 0;
 
+var posX = xCenter/2;
+var posY = 650 * widthRegulator;
+var y = 0;
+var x = 0;
+
 /*var test1 = 0;
 var test2 = 0;
 var testx = 0;
@@ -172,10 +177,10 @@ enterBool = false;
 
     listeners();
     
-    var posX = xCenter/2;
-    var posY = 650 * widthRegulator;
-    var y = 0;
-    var x = 0;
+   /* posX = xCenter/2;
+    posY = 650 * widthRegulator;
+    y = 0;
+    x = 0;*/
 
     document.body.onmousemove = function(){
       
@@ -188,7 +193,7 @@ enterBool = false;
      
     };
  
-   this.runGameFunction();
+   gameSpinacz.start.runGameFunction();
 },
 
 runGameFunction: function() {
@@ -697,6 +702,7 @@ function pelota (x, y, z){
               var explosion = new Audio('http://soundbible.com/mp3/Bomb_Exploding-Sound_Explorer-68256487.mp3');
               explosion.play();
               
+			  gameSpinacz.start.runGameFunction();
               points ++;
               end = true;
               
@@ -834,3 +840,4 @@ function listeners () {
 </div>
 </body>
 </html>
+
