@@ -207,7 +207,7 @@ runGameFunction: function() {
                         
                myGameArea.start(x,y);
                
-                  if(powerUpFlag && powerLevel <= 3){
+                  if(powerUpFlag && powerLevel <= 5){
                         powerLevel = powerLevel + 0.25/10;
 
                    }
@@ -225,7 +225,7 @@ drawLine: function (ctx, x2, y2, x3, y3) {
     
     ctx.clearRect(0, 0, 5000, 5000);
     ctx.beginPath();
-    ctx.lineWidth="3";
+    ctx.lineWidth="5";
     ctx.strokeStyle="red"; // Green path
     
     ctx.moveTo(600 * heightRegulator, 650 * widthRegulator);
@@ -259,7 +259,7 @@ drawBall1: function(context, color){
 
       context.fillStyle = color;
       context.fill();
-      context.lineWidth = 5;
+      context.lineWidth = 1;
       context.strokeStyle = '#003300';
       context.stroke();
       
@@ -279,14 +279,14 @@ drawBall2: function (context){
        }else{
             context.fillStyle = "green";
             context.fill();
-            context.lineWidth = 5;
+            context.lineWidth = 1;
             context.strokeStyle = '#003300';
             context.stroke();
 
                  if(powerUpFlag){
 
                   context.fillStyle="#FF0000";
-                  context.fillRect(200 *  heightRegulator, 700 * widthRegulator, (200*powerLevel/3) * heightRegulator, 35 * widthRegulator);
+                  context.fillRect(200 *  heightRegulator, 700 * widthRegulator, (200*powerLevel/5) * heightRegulator, 35 * widthRegulator);
               }    
     }
 },
@@ -305,12 +305,7 @@ luzna: function () {
                            gameSpinacz.start.printScore();
               
                        }else{
-      
-                        myGameArea.getContext.font = "30px Arial";
-                        myGameArea.getContext.fillText("",1200 * heightRegulator, 100 * widthRegulator);
-                        myGameArea.getContext.fillStyle = 'purple';
-                        myGameArea.getContext.fillText("Point Total: " + points, 1200 * heightRegulator, 100 * widthRegulator);
-                 
+						gameSpinacz.start.printCurrScore();
                         gameSpinacz.start.printTime();
                     }
   }
@@ -348,7 +343,6 @@ releaseBall: function (deltaX, deltaY, deltaZ) {
 
                      //
                      delete myGameArea.start();
-                     delete myGameArea.space();
                      reposCount = 0;
 
 
@@ -408,6 +402,13 @@ printTime: function (){
         
 },
 
+printCurrScore: function() {
+	 myGameArea.getContext.font = "30px Arial";
+	 myGameArea.getContext.fillText("",1200 * heightRegulator, 100 * widthRegulator);
+	 myGameArea.getContext.fillStyle = 'purple';
+	 myGameArea.getContext.fillText("Point Total: " + points, 1200 * heightRegulator ,100 * widthRegulator);
+},
+
 printScore: function (){
 
 
@@ -457,43 +458,29 @@ start: function(x, y) {
         Y0 =  myGameArea.getY;
         Z0 =  myGameArea.getZ;
       
-      this.gameBall = new pelota(x, y, this.z);
- 
-      
-                 
-                 myGameArea.getContext.font = "20px Arial";
-                 myGameArea.getContext.fillText("",1200 * heightRegulator, 100 * widthRegulator);
-                 myGameArea.getContext.fillStyle = 'purple';
-                 myGameArea.getContext.fillText("Point Total: " + points, 1200 * heightRegulator ,100 * widthRegulator);
-                 
-        gameSpinacz.start.printTime();
-                 
+      //this.gameBall.splice(0, 0, new pelota(x, y, this.z));       
+      this.gameBall =  new pelota(x, y, this.z);  	  
       for (var i =0; i < spriteArray.length; i++){
         spriteArray[i].move();
       }
       
-           this.gameBall.followProca();
-
-            this.gameBall.drawMark();
+        this.gameBall.followProca();
+        this.gameBall.drawMark();
+	    gameSpinacz.start.printCurrScore();           
+        gameSpinacz.start.printTime();
 
                 
 
        
     }else {
-
+	  powerLevel = 0;
+	  powerUpFlag = false;
       gameSpinacz.start.luzna();
-      
     };
 
         
     },
-
-    
-space: function()  {
-
-
-},
-    
+ 
     get getContext() { 
         return this.context;
     },
@@ -540,7 +527,8 @@ function KeyUpHandler(){
 
             myGameArea.gameBall = new pelota(myGameArea.getX, myGameArea.getY, myGameArea.getZ);
             myGameArea.gameBall.followProca();
-            
+            gameSpinacz.start.printCurrScore();
+			gameSpinacz.start.printTime();
             
 
            
@@ -655,32 +643,27 @@ function pelota (x, y, z){
       gameSpinacz.start.luzna();
       context.beginPath();
       context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
-      
-      
-     
+       
       this.z = this.z + zSpeed;
       this.radius = 17 * (BigD/(BigD+this.z));
       this.x = ((X0-xCenter) + xSpeed*reposCount)*(BigD+Z0)/(BigD +this.z) + xCenter ;
 
      // this.y = ((Y0-yCenter) + ySpeed*reposCount)*(BigD+Z0)/(BigD+this.z) + yCenter;
       this.y = ((ySpeed * (reposCount-8)  + (0.04 * Math.pow((reposCount-8), 2))/2 + (650 * (widthRegulator)-yCenter))*(BigD+300)/(BigD + zSpeed*reposCount))+ yCenter;
-      
-        
       /*if (reposCount === test1){
           alert("stop");
       }*/
 
-
        if (spriteArray.length === 0 || myGameArea.gameBall.z > spriteArray[spriteArray.length - 1].z){
-                context = myGameArea.getContext;   
-                context.beginPath();
-                context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
-               gameSpinacz.start.drawBall2(context);
+          context = myGameArea.getContext;   
+          context.beginPath();
+          context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
+          gameSpinacz.start.drawBall2(context);
         }
        
        for (var i = 0; i < spriteArray.length; i++ ){
            
-             spriteArray[i].move();
+            spriteArray[i].move();
             if(myGameArea.gameBall.z < spriteArray[i].z /*&& i >= index*/){
                 context = myGameArea.getContext;   
                 context.beginPath();
@@ -712,11 +695,7 @@ function pelota (x, y, z){
 
       }        
             gameSpinacz.start.printTime();
-            myGameArea.getContext.font = "20px Arial";
-            myGameArea.getContext.fillText("", 1200 * heightRegulator, 100 * widthRegulator);
-            myGameArea.getContext.fillStyle = 'purple';
-            myGameArea.getContext.fillText("Point Total: " + points, 1200 * heightRegulator, 100 * widthRegulator);
-
+			gameSpinacz.start.printCurrScore();
  
   };
     
